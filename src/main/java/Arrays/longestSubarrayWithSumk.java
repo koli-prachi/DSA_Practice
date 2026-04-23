@@ -2,14 +2,18 @@ package Arrays;
 
 /*
 
-PROBLEM : 58. Length of Last Word
+PROBLEM : Longest Subarray with Sum 'k'
 PLATFORM : GFG
 APPRAOCH :
-    1. Brute Force => Using trim()  Time: O(n) | Space : O(n)
-    2. Best Optimal => Using 2 while loops  Time : O(n) | Space : O(1)
+    1. Brute Force => Check all subarrays  Time: O(n²) | Space : O(1) => no extra data structure
+    2. Sliding Window (ONLY positive numbers) => Using left and right pointers  Time : O(n) | Space : O(1)
+    3. Prefix Sum + HashMap (General Case:- includes +ve, -ve, 0) => Better than sliding window  Time : O(n) | Space : O(n)
 
 KEY LEARNINGS:
-    focus on skippind the trailing spaces, then counting the last word
+   - sliding window works only for non-negative arrays
+   - prefix sum is used for general case
+        - (prefixSum - k) helps find out the valid subarray
+        - HashMap helps to store the first occurence of prefix sum
 
 */
 
@@ -23,11 +27,67 @@ public class longestSubarrayWithSumk {
 
         int[] arr = {5, 2, 2, 5, 1, 1, 1, 1, 4};
         int k = 4;
-        System.out.println(longestSubarrayOptimal(arr, k));
+        System.out.println(" longest Subarray Optimal " + longestSubarrayOptimal(arr, k));
+        System.out.println(" longest Subarray Optimal Positive " + longestSubarrayOptimalPositive(arr, k));
+        System.out.println(" longest Subarray Brute " + longestSubarrayBrute(arr, k));
+    }
+
+    // BRUTE FORCE APPROACH
+    public static int longestSubarrayBrute(int[] arr, int k){
+
+        int maxLength = 0;
+
+        for (int i = 0; i < arr.length; i++){
+
+            int sum = 0;  // for every i iteration sum should start from 0
+            for (int j = i; j < arr.length; j++){
+
+                // helps to get sum of each and every subarray possible
+                sum += arr[j];
+
+                // checks if the sum is equal to 'k'
+                if (sum == k){
+                    maxLength = Math.max(maxLength, (j - i + 1));
+                }
+            }
+        }
+
+        return maxLength;
+    }
+
+    // Longest subrray With Sum 'k' => Sliding Window Approach (works for only +ve elements)
+    public static int longestSubarrayOptimalPositive(int[] arr, int k){
+
+        // declaring variables
+        int leftPointer = 0;
+        int rightPointer = 0;
+        int sum = 0;
+        int maxLength = 0;
+
+        // maintaining a window
+        for (rightPointer = 0; rightPointer < arr.length; rightPointer++) {
+
+                sum += arr[rightPointer]; // expanding the window to right
+
+                // if the sum gets too big than the 'k' => THEN Shrink the window till it is smaller than 'k'
+                while (sum > k && leftPointer <= rightPointer) {
+                    sum -= arr[leftPointer];
+                    leftPointer++;
+                }
+
+                // if sum matches the 'k' => THEN we have found the required subarray so find its length to get maxLength
+                if (sum == k) {
+                    maxLength = Math.max(maxLength, (rightPointer - leftPointer + 1));
+                }
+
+        }
+
+
+        return maxLength;
     }
 
 
-    // Longest subrray With Sum 'k' => Using PREFIX SUM (works for both +ve and -ve elements)
+    // Longest subrray With Sum 'k' => Using PREFIX SUM + HashMap (works for both +ve and -ve elements)
     public static int longestSubarrayOptimal(int[] arr, int k){
 
         // HashMap for storing the <key, value> = <prefixSum, FirsSeenIndex> | Storing the first occurence of the prefix sum to find the valid subarray that sums to 'k'
@@ -66,4 +126,5 @@ public class longestSubarrayWithSumk {
 
         return result;
     }
+
 }
