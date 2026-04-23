@@ -1,5 +1,19 @@
 package Arrays;
 
+/*
+
+PROBLEM : 58. Length of Last Word
+PLATFORM : GFG
+APPRAOCH :
+    1. Brute Force => Using trim()  Time: O(n) | Space : O(n)
+    2. Best Optimal => Using 2 while loops  Time : O(n) | Space : O(1)
+
+KEY LEARNINGS:
+    focus on skippind the trailing spaces, then counting the last word
+
+*/
+
+
 import java.util.HashMap;
 
 public class longestSubarrayWithSumk {
